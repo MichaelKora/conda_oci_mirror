@@ -19,6 +19,7 @@ from conda_oci_mirror.constants import (
 from conda_oci_mirror.oci import OCI
 from conda_oci_mirror.oras import ORAS, Layer
 from conda_oci_mirror.util import get_github_auth
+from conda_oci_mirror.functions import get_all_packages
 
 
 def compress_folder(source_dir, output_filename):
@@ -204,6 +205,10 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
 
             with open(repodata_fn) as fi:
                 j = json.load(fi)
+            
+            #if len(packages) == 0 or packages[0] == "all":
+            if packages[0] == "all":
+                packages = get_all_packages(j)
 
             for key, package_info in j["packages"].items():
                 if packages and package_info["name"] not in packages:
