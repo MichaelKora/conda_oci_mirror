@@ -194,6 +194,7 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
 
     for channel in channels:
         for subdir in subdirs:
+            any_changes_occured = False
             manifests_checksums = {}
             repodata_checksums = {}
 
@@ -216,6 +217,7 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
                 )
 
                 if key not in existing_packages:
+                    any_changes_occured = True
                     r = requests.get(
                         f"https://conda.anaconda.org/{channel}/{subdir}/{key}",
                         allow_redirects=True,
@@ -284,8 +286,11 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
                     json.dump(manifests_checksums, write_file)
             
             #upload the index file for the whole subdir
-            upload_index_json(global_index, channel, remote_loc)
-
+            if any_changes_occured:
+                print("Uploading the newest index.json")
+                upload_index_json(global_index, channel, remote_loc)
+            else:
+                print("No new packages found. Index.json will not be uploaded.")
 
 
 
