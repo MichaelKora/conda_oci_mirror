@@ -19,7 +19,7 @@ from conda_oci_mirror.constants import (
 from conda_oci_mirror.oci import OCI
 from conda_oci_mirror.oras import ORAS, Layer
 from conda_oci_mirror.util import get_github_auth
-
+from conda_oci_mirror.functions import upload_index_json
 
 def compress_folder(source_dir, output_filename):
     return subprocess.run(
@@ -198,7 +198,9 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
             repodata_checksums = {}
 
             full_cache_dir = cache_dir / channel / subdir
-
+            
+            global_index = {"info": {"subdir" : {}}}
+            global_index["info"]["subdir"] = subdir
 
             repodata_fn = get_repodata(channel, subdir, cache_dir)
 
@@ -237,6 +239,13 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
                         manifests_checksums[pkg_parent] = {}
                         repodata_checksums[pkg_parent] = {}
                     
+                    # update the global index file
+                    if pkg_parent in global_index.keys():
+                        global_index[pkg_parent].append(index_file)
+                    else:
+                        global_index[pkg_parent] = []
+                        global_index[pkg_parent].append(index_file)
+                    
                     # get the checksum of the downloaded pkg
                     tag = index_file["version"] + "-" + index_file["build"]
                     current_pkg = pkg_parent + "-" + tag
@@ -273,6 +282,10 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
 
                 with open(manifests_checksums_path, "w") as write_file:
                     json.dump(manifests_checksums, write_file)
+            
+            #upload the index file for the whole subdir
+            upload_index_json(global_index, channel, remote_loc)
+
 
 
 
