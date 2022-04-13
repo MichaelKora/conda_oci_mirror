@@ -5,13 +5,6 @@ from datetime import datetime
 
 from conda_oci_mirror.oras import ORAS, Layer
 
-def get_all_packages(repodata):
-    found_packages = []
-    for key in repodata["packages"]:
-        found_packages.append(key)
-    return found_packages
-
-
 def upload_index_json(global_index, channel, remote_loc):
     for key in global_index:
         # itterate throughevery pkg. e.g: zlib
