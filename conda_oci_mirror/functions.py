@@ -3,24 +3,7 @@ import logging
 import pathlib
 from datetime import datetime
 
-# from conda_oci_mirror.oci import OCI
 from conda_oci_mirror.oras import ORAS, Layer
-
-# from pathlib import Path
-
-
-# oci = OCI("https://ghcr.io", "MichaelKora")
-
-all_sub_dirs = [
-    "linux-64",
-    "osx-64",
-    "osx-arm64",
-    "win-64",
-    "linux-aarch64",
-    "linux-ppc64le",
-    "noarch",
-]
-
 
 def get_all_packages(repodata):
     found_packages = []
