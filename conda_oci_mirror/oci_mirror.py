@@ -95,7 +95,9 @@ def upload_conda_package(path_to_archive, host, channel):
         oras.push(
             f"{host}/{channel}/{subdir}/{name}", version_and_build, layers + metadata
         )
+
     return j
+
 
 
 def get_repodata(channel, subdir, cache_dir=CACHE_DIR):
@@ -197,6 +199,7 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
 
             full_cache_dir = cache_dir / channel / subdir
 
+
             repodata_fn = get_repodata(channel, subdir, cache_dir)
 
             with open(repodata_fn) as fi:
@@ -215,7 +218,7 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
                         f"https://conda.anaconda.org/{channel}/{subdir}/{key}",
                         allow_redirects=True,
                     )
-                    
+
                     full_cache_dir.mkdir(parents=True, exist_ok=True)
                     ckey = full_cache_dir / key
                     with open(ckey, "wb") as fo:
@@ -224,6 +227,7 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
                     assert_checksum(ckey, package_info)
 
                     upload_conda_package(ckey, remote_loc, channel)
+
 
                     # copy checksum 
                     index_file = upload_conda_package(ckey, remote_loc, channel)
@@ -269,7 +273,6 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
 
                 with open(manifests_checksums_path, "w") as write_file:
                     json.dump(manifests_checksums, write_file)
-
 
 
 
