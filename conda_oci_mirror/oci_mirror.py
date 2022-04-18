@@ -267,14 +267,11 @@ def mirror(channels, subdirs, packages, target_org_or_user, host, cache_dir=None
                             sha_manifest = layer["digest"]
                             manifests_checksums[pkg_parent][current_pkg] = sha_manifest
                     
-                    # delete the package
-                    for child in full_cache_dir.iterdir():
-                        if child.is_dir():
-                            child.rmdir()
-                        elif ".json" not in str(child):
-                            child.unlink(missing_ok=True)
+                   
 
             # store both dicts for each subdir(arch)
+            full_cache_dir.mkdir(parents=True, exist_ok=True)
+
             if full_cache_dir.is_dir():
                 repodata_checksums_path = full_cache_dir / "repodata_checksums.json"
                 manifests_checksums_path = full_cache_dir / "manifest_checksums.json"
