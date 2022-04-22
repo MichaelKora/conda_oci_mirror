@@ -254,14 +254,20 @@ class Task:
 
         return target_func()
 
-    def edit_manifest(repodata_fn,pkg):
+    def edit_manifest(repodata_fn,pkg_fn):
+        a_pkg_name = str(pkg_fn).rsplit(".",2)[0]
+        pkg_name = a_pkg_name.rsplit("/",1)[1]
+
         with open(repodata_fn) as fi:
             j_file = json.load(fi)
         
-        md5 = j_file["packages"][pkg]["md5"]
-        _timestamp = j_file["packages"][pkg]["timestamp"]
+        md5 = j_file["packages"][pkg_name]["md5"]
+        _timestamp = j_file["packages"][pkg_name]["timestamp"]
         
         #unzip file
+        subprocess.run(f"tar -xvjf {pkg_fn}", shell=True)
+
+        subprocess.run(f"ls -al {a_pkg_name}", shell=True)
 
 
         #get the manifest
@@ -287,9 +293,9 @@ class Task:
 
         try:
             # edit the manifest
-            print(f"!!!!!!!!!!!!!!printing {str(self.download_file)}: ")
-            subprocess.run(f"ls -al {self.cache_dir}", shell=True)
-            print(f"!!!!!!!!!!!!!!end")
+            #print(f"!!!!!!!!!!!!!!printing {str(self.download_file)}: ")
+            #subprocess.run(f"ls -al {self.cache_dir}", shell=True)
+            #print(f"!!!!!!!!!!!!!!end")
             # upload the package
             upload_conda_package(self.file, self.remote_loc, self.channel)
         except Exception:
