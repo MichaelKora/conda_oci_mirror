@@ -288,7 +288,7 @@ class Task:
         try:
             # edit the manifest
             print(f"!!!!!!!!!!!!!!printing {str(self.download_file)}: ")
-            subprocess.run(f"ls -al {self.download_file}", shell=True)
+            subprocess.run(f"ls -al", shell=True)
             print(f"!!!!!!!!!!!!!!end")
             # upload the package
             upload_conda_package(self.file, self.remote_loc, self.channel)
