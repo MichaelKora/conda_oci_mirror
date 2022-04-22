@@ -254,6 +254,24 @@ class Task:
 
         return target_func()
 
+    def edit_manifest(repodata_fn,pkg):
+        with open(repodata_fn) as fi:
+            j_file = json.load(fi)
+        
+        md5 = j_file["packages"][pkg]["md5"]
+        _timestamp = j_file["packages"][pkg]["timestamp"]
+        
+        #unzip file
+
+
+        #get the manifest
+
+        #modify manifest
+
+        #delete  old pkg
+
+        #zip the new pkg
+
     def run(self):
 
         self.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -268,6 +286,10 @@ class Task:
             return self.retry()
 
         try:
+            # edit the manifest
+            print(f"!!!!!!!!!!!!!!printing {self.download_file}: ")
+            subprocess.run(f"ls -al {self.download_file}", shell=True)
+            # upload the package
             upload_conda_package(self.file, self.remote_loc, self.channel)
         except Exception:
             return self.retry()
