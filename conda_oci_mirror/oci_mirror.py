@@ -224,7 +224,7 @@ class Task:
     def download_file(self):
         url = f"https://conda.anaconda.org/{self.channel}/{self.subdir}/{self.package}"
         fn = self.cache_dir / self.package
-
+        print (f"!!Url is: {url}")
         try:
             with requests.get(url, stream=True, allow_redirects=True) as r:
                 r.raise_for_status()
@@ -288,7 +288,7 @@ class Task:
         try:
             # edit the manifest
             print(f"!!!!!!!!!!!!!!printing {str(self.download_file)}: ")
-            subprocess.run(f"ls -al", shell=True)
+            subprocess.run(f"ls -al {self.cache_dir}", shell=True)
             print(f"!!!!!!!!!!!!!!end")
             # upload the package
             upload_conda_package(self.file, self.remote_loc, self.channel)
