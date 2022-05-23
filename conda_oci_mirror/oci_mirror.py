@@ -22,6 +22,8 @@ from conda_oci_mirror.constants import (
     info_index_media_type,
     package_conda_media_type,
     package_tarbz2_media_type,
+    dot_js_file_media_type,
+    dot_data_file_media_type,
 )
 from conda_oci_mirror.oci import OCI
 from conda_oci_mirror.oras import ORAS, Layer
@@ -89,7 +91,7 @@ def reverse_tag_format(tag):
 
 def prepare_func( pkg):
   files_dir = pathlib.Path("/home/runner/packed")    
-  files_dir.mkdir(mode=511, parents=True, exist_ok=False)
+  files_dir.mkdir(mode=511, parents=True, exist_ok=True)
   dot_data = pkg + ".data"
   dot_js = pkg + ".js"
   dot_data_fn = files_dir / dot_data
@@ -157,16 +159,15 @@ def upload_conda_package(path_to_archive, host, channel, oci, extra_tags=None):
 
         oci.push_image(pathlib.Path(prefix), remote_location, name, version_and_build, _desc_annotations, layers + metadata)
         
-
-
-        manfst = oci.get_manifest(name, version_and_build)
+        m_pkg = f"{channel}/{subdir}/{name}"
+        manfst = oci.get_manifest(m_pkg, version_and_build)
         print("####################first upload")
         print(json.dumps(manfst, indent=4, sort_keys=True))
 
         prepare_func(name + "-" + version_and_build)
         push_new_layers(oci, remote_location, name, version_and_build, _desc_annotations)
 
-        manfst = oci.get_manifest(name, version_and_build)
+        manfst = oci.get_manifest(m_pkg, version_and_build)
         print("!!!!!!!!!!!!!!!!!!!!!!!!! second upload")
         print(json.dumps(manfst, indent=4, sort_keys=True))
 
