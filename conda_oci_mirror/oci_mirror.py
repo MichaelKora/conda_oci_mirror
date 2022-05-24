@@ -165,7 +165,7 @@ def upload_conda_package(path_to_archive, host, channel, oci, extra_tags=None):
         print(json.dumps(manfst, indent=4, sort_keys=True))
 
         prepare_func(name + "-" + version_and_build)
-        #push_new_layers(oci, remote_location, name, version_and_build, _desc_annotations)
+        push_new_layers(oci, remote_location, name, version_and_build, _desc_annotations)
 
         #manfst = oci.get_manifest(m_pkg, version_and_build)
         #print("!!!!!!!!!!!!!!!!!!!!!!!!! second upload")
