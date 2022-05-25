@@ -99,6 +99,7 @@ def prepare_func( pkg):
   dot_data_fn.write_text("blabla")
   dot_js_fn.write_text("blabla")
 
+
   
 def push_new_layers(oci, remote_location, name, version_and_build, _desc_annotations):
   
@@ -166,8 +167,10 @@ def upload_conda_package(path_to_archive, host, channel, oci, extra_tags=None):
         print("####################first upload")
         print(json.dumps(manfst, indent=4, sort_keys=True))
 
+        print("!!start!!")
         prepare_func(name + "-" + version_and_build)
         print("files created")
+
         push_new_layers(oci, remote_location, name, version_and_build, _desc_annotations)
 
         manfst = oci.get_manifest(m_pkg, version_and_build)
