@@ -96,8 +96,8 @@ def prepare_func( pkg):
   dot_js = pkg + ".js"
   dot_data_fn = files_dir / dot_data
   dot_js_fn = files_dir / dot_js
-  dot_data_fn.open(mode='w', buffering=-1, encoding=None, errors=None, newline=None)
-  dot_js_fn.open(mode='w', buffering=-1, encoding=None, errors=None, newline=None)
+  dot_data_fn.write_text("blabla")
+  dot_js_fn.write_text("blabla")
 
   
 def push_new_layers(oci, remote_location, name, version_and_build, _desc_annotations):
