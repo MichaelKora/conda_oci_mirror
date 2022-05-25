@@ -102,6 +102,7 @@ def prepare_func( pkg):
   
 def push_new_layers(oci, remote_location, name, version_and_build, _desc_annotations):
   
+  print("am in ")
   package_name = name + "-" +  version_and_build
   files_dir = pathlib.Path("/home/runner/packed")    
   dot_js_file = package_name + ".js"
@@ -109,6 +110,7 @@ def push_new_layers(oci, remote_location, name, version_and_build, _desc_annotat
 
   new_layers = [Layer(dot_js_file, dot_js_file_media_type, {}), Layer(dot_data_file, dot_data_file_media_type, {})]
   
+  print("layers created")
   oci.push_image(files_dir, remote_location, name, version_and_build, _desc_annotations, new_layers)
 
 
@@ -165,11 +167,12 @@ def upload_conda_package(path_to_archive, host, channel, oci, extra_tags=None):
         print(json.dumps(manfst, indent=4, sort_keys=True))
 
         prepare_func(name + "-" + version_and_build)
+        print("files created")
         push_new_layers(oci, remote_location, name, version_and_build, _desc_annotations)
 
-        #manfst = oci.get_manifest(m_pkg, version_and_build)
-        #print("!!!!!!!!!!!!!!!!!!!!!!!!! second upload")
-        #print(json.dumps(manfst, indent=4, sort_keys=True))
+        manfst = oci.get_manifest(m_pkg, version_and_build)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!! second upload")
+        print(json.dumps(manfst, indent=4, sort_keys=True))
 
 
 
