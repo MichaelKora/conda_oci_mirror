@@ -165,7 +165,7 @@ def upload_conda_package(path_to_archive, host, channel, oci, extra_tags=None):
         m_pkg = f"{channel}/{subdir}/{name}"
         manfst = oci.get_manifest(m_pkg, version_and_build)
         print("####################first upload")
-        print(json.dumps(manfst, indent=4, sort_keys=True))
+        #print(json.dumps(manfst, indent=4, sort_keys=True))
 
         print("!!start!!")
         prepare_func(name + "-" + version_and_build)
