@@ -21,6 +21,8 @@ from conda_oci_mirror.constants import (
     info_index_media_type,
     package_conda_media_type,
     package_tarbz2_media_type,
+    dot_js_file_media_type,
+    dot_data_file_media_type,
 )
 from conda_oci_mirror.layer import Layer
 from conda_oci_mirror.oci import OCI
@@ -87,6 +89,33 @@ def reverse_tag_format(tag):
     return tag.replace("__p__", "+").replace("__e__", "!")
 
 
+def prepare_func( pkg):
+  files_dir = pathlib.Path("/home/runner/packed")    
+  files_dir.mkdir(mode=511, parents=True, exist_ok=True)
+  dot_data = pkg + ".data"
+  dot_js = pkg + ".js"
+  dot_data_fn = files_dir / dot_data
+  dot_js_fn = files_dir / dot_js
+  dot_data_fn.write_text("blabla")
+  dot_js_fn.write_text("blabla")
+
+
+  
+def push_new_layers(oci, remote_location, name, version_and_build, desc_annotations):
+
+  m_pkg = remote_location + name
+  old_manifest = oci.get_manifest(m_pkg, version_and_build)
+  
+  package_name = name + "-" +  version_and_build
+  files_dir = pathlib.Path("/home/runner/packed")    
+  dot_js_file = files_dir / (package_name + ".js")
+  dot_data_file = files_dir / (package_name + ".data")
+
+  new_layers = [Layer(dot_js_file, dot_js_file_media_type, {}), Layer(dot_data_file, dot_data_file_media_type, {})]
+  
+  oci.push_image(m_pkg, version_and_build, old_manifest, new_layers)
+
+
 def upload_conda_package(path_to_archive, host, channel, oci, extra_tags=None):
     path_to_archive = pathlib.Path(path_to_archive)
     package_name = get_package_name(path_to_archive)
@@ -101,12 +130,12 @@ def upload_conda_package(path_to_archive, host, channel, oci, extra_tags=None):
         fn = upload_files_path / path_to_archive.name
         md5_value = md5sum(fn)
 
-        _annotations_dict = {"org.conda.md5": md5_value}
+        annotations_dict = {"org.conda.md5": md5_value}
 
         if path_to_archive.name.endswith("tar.bz2"):
             layers = [
                 Layer(
-                    path_to_archive.name, package_tarbz2_media_type, _annotations_dict
+                    path_to_archive.name, package_tarbz2_media_type, annotations_dict
                 )
             ]
         else:
@@ -134,8 +163,25 @@ def upload_conda_package(path_to_archive, host, channel, oci, extra_tags=None):
 
         print("Pushing: ", f"{host}/{channel}/{subdir}/{name}")
         oras.push(
-            f"{host}/{channel}/{subdir}/{name}", version_and_build, layers + metadata
+            f"{host}/{channel}/{subdir}/{name}", version_and_build,{}, layers + metadata
         )
+        
+        remote_location = f"{channel}/{subdir}"
+        m_pkg = f"{remote_location}/{name}"
+        manfst = oci.get_manifest(m_pkg, version_and_build)
+        print("*************************first upload")
+        print(json.dumps(manfst, indent=4, sort_keys=True))
+
+        prepare_func(name + "-" + version_and_build)
+        #description = "update the image"
+        #desc_annotations = {"org.opencontainers.image.description": description }
+
+        push_new_layers(oci, remote_location, name, version_and_build)
+
+        manfst = oci.get_manifest(m_pkg, version_and_build)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!! second upload")
+        print(json.dumps(manfst, indent=4, sort_keys=True))
+
 
         if extra_tags:
             for t in extra_tags:

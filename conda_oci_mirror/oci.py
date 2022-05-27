@@ -113,12 +113,17 @@ class OCI:
         self,
         package,
         reference,
+        old_manifest,
         layers,
         config=None,
         annotations=None,
     ):
+        print (f"Package in push image is: << {package}>>")
 
-        manifest_dict = {
+        if old_manifest:
+            manifest_dict = old_manifest
+        else:
+            manifest_dict = {
             "schemaVersion": 2,
             "mediaType": "application/vnd.oci.image.manifest.v1+json",
             "config": {},
