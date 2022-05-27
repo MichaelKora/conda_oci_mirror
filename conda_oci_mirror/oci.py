@@ -50,6 +50,7 @@ class OCI:
         package = self.full_package(package)
         print(f"Getting tags for {package}")
         url = f"{self.location}/v2/{package}/tags/list?n={n_tags}"
+        print(f"?????? url is << {url} >>")
         if prev_last:
             url += "&last=prev_last"
         oci_session = self.oci_auth(self.location, package)
@@ -71,7 +72,9 @@ class OCI:
                 link = None
 
             tags += res.json()["tags"]
-
+            
+        print("??????found tags are")
+        print(tags)
         return tags
 
     def get_manifest(self, package, tag):

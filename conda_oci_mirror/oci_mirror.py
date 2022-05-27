@@ -264,6 +264,7 @@ def get_existing_tags(oci, channel, subdir, package):
         return existing_tags_cache[package]
 
     gh_name = f"{channel}/{subdir}/{package}"
+    print(f"????? gh_name: <<{gh_name} >>")
     tags = oci.get_tags(gh_name)
 
     print(f"Found {len(tags)} existing tags for {gh_name}")
