@@ -101,7 +101,7 @@ def prepare_func( pkg):
 
 
   
-def push_new_layers(oci, remote_location, name, version_and_build, desc_annotations):
+def push_new_layers(oci, remote_location, name, version_and_build):
 
   m_pkg = remote_location + name
   old_manifest = oci.get_manifest(m_pkg, version_and_build)

@@ -118,7 +118,7 @@ class OCI:
         config=None,
         annotations=None,
     ):
-        print (f"Package in push image is: << {package}>>")
+        print (f"+++++++++++++Package in push image is: << {package}>>")
 
         if old_manifest:
             manifest_dict = old_manifest
